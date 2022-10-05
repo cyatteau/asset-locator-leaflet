@@ -2,8 +2,8 @@ const searchInput = document.getElementById("search");
 const resultList = document.getElementById("result-list");
 const mapContainer = document.getElementById("map-container");
 const currentMarkers = [];
-let lat = 47.6038321;
-let long = -122.330062;
+let lat = 52.5170365;
+let long = 13.3888599;
 let view = 13;
 
 const map = L.map(mapContainer).setView([lat, long], view);
@@ -45,6 +45,7 @@ function setResultList(jResult) {
     const li = document.createElement("li");
     li.classList.add("list-group-item", "list-group-item-action");
     const latiLongi = { lat: result.lat, lon: result.lon };
+    console.log(result);
     li.innerHTML = result.display_name;
     li.addEventListener("click", (event) => {
       for (const child of resultList.children) {
@@ -56,8 +57,7 @@ function setResultList(jResult) {
       map.setView(position, 12);
     });
     const position = new L.LatLng(result.lat, result.lon);
-    currentMarkers.push(new L.marker(position).addTo(map).bindPopup(li.innerHTML));
-    //currentMarkers.push(new L.popup().setLatLng(position))
+    currentMarkers.push(new L.marker(position).addTo(map).bindTooltip(li.innerHTML));
     resultList.appendChild(li);
   }
 }
