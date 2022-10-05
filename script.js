@@ -56,7 +56,8 @@ function setResultList(jResult) {
       map.setView(position, 12);
     });
     const position = new L.LatLng(result.lat, result.lon);
-    currentMarkers.push(new L.marker(position).addTo(map));
+    currentMarkers.push(new L.marker(position).addTo(map).bindPopup(li.innerHTML));
+    //currentMarkers.push(new L.popup().setLatLng(position))
     resultList.appendChild(li);
   }
 }
