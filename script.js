@@ -29,9 +29,15 @@ function queryResults(query) {
 
 queryResults(query);
 
-document.getElementById("search-button").addEventListener("click", () => {
+document.querySelector("form").addEventListener("submit", (event) => {
+  event.preventDefault();
   const input = searchInput.value;
-  view = 13;
+  queryResults(input);
+});
+
+document.getElementById("search-button").addEventListener("click", (event) => {
+  event.preventDefault();
+  const input = searchInput.value;
   queryResults(input);
 });
 
@@ -45,7 +51,6 @@ function setResultList(jResult) {
     const li = document.createElement("li");
     li.classList.add("list-group-item", "list-group-item-action");
     const latiLongi = { lat: result.lat, lon: result.lon };
-    console.log(result);
     li.innerHTML = result.display_name;
     li.addEventListener("click", (event) => {
       for (const child of resultList.children) {
@@ -54,10 +59,14 @@ function setResultList(jResult) {
       event.target.classList.add("active");
       const clickedData = latiLongi;
       const position = new L.LatLng(clickedData.lat, clickedData.lon);
-      map.setView(position, 12);
+      map.setView(position, 13);
     });
     const position = new L.LatLng(result.lat, result.lon);
-    currentMarkers.push(new L.marker(position).addTo(map).bindTooltip(li.innerHTML));
+    currentMarkers.push(
+      new L.marker(position).addTo(map).bindTooltip(() => {
+        return L.Util.template(`<b>Name: </b>${result.display_name}<br/>`);
+      })
+    );
     resultList.appendChild(li);
   }
 }

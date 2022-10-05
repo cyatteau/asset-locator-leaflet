@@ -22,15 +22,17 @@
   <body>
     <div class="container pt-5 pb-5">
       <h2>Nearby Post Office</h2>
-      <div class="row justify-content-md-center">
-        <label for="search" style="margin-right: 10px"
-          >Enter your address, city or zip code:
-        </label>
-        <input id="search" style="width: 350px" type="text" />
-        <button type="button" class="ml-5 btn btn-primary" id="search-button">
-          Search
-        </button>
-      </div>
+      <form autocomplete="off" class="row justify-content-md-center">
+        <div class="row justify-content-md-center">
+          <label for="search" style="margin-right: 10px"
+            >Enter your address, city or zip code:
+          </label>
+          <input id="search" style="width: 350px" type="text" />
+          <button type="button" class="ml-5 btn btn-primary" id="search-button">
+            Search
+          </button>
+        </div>
+      </form>
       <div class="row mt-5">
         <ul id="result-list" class="col-4 list-group"></ul>
         <div class="col-sm-8">
