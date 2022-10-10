@@ -1,7 +1,5 @@
-const searchInput = document.getElementById("search");
 const resultList = document.getElementById("result-list");
 const mapContainer = document.getElementById("map-container");
-const currentMarkers = [];
 let lat = 37.7749;
 let long = -122.4194;
 let view = 13;
@@ -16,19 +14,19 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 //search field
+const searchInput = document.getElementById("search");
 document.querySelector("form").addEventListener("submit", (event) => {
   event.preventDefault();
   const input = searchInput.value;
   queryResults(input);
 });
-//search button
 document.getElementById("search-button").addEventListener("click", (event) => {
   event.preventDefault();
   const input = searchInput.value;
   queryResults(input);
 });
 
-//Handle Nominatim query results
+//handle getting search results from Nominatim
 let query = "San Francisco";
 queryResults(query);
 function queryResults(query) {
@@ -39,22 +37,23 @@ function queryResults(query) {
     .then((jResult) => {
       lat = jResult[0].lat;
       long = jResult[0].lon;
-      setResultList(jResult);
+      showPlaces(jResult);
     });
 }
 
 const clickedLayerGroup = L.layerGroup().addTo(map);
+const currentMarkers = [];
 
 //handle getting results
-function setResultList(jResult) {
+function showPlaces(jResult) {
   resultList.innerHTML = "";
   for (const marker of currentMarkers) {
     map.removeLayer(marker);
   }
   map.setView(new L.LatLng(lat, long), view);
 
+  //placing markers at locations
   for (const result of jResult) {
-    //placing markers at locations
     const position = new L.LatLng(result.lat, result.lon);
     currentMarkers.push(
       new L.marker(position).addTo(map).bindTooltip(() => {
@@ -65,9 +64,16 @@ function setResultList(jResult) {
     //handle list of places on left
     const li = document.createElement("li");
     li.classList.add("list-group-item", "list-group-item-action");
-    const latiLongi = { lat: result.lat, lon: result.lon };
     li.innerHTML = result.display_name;
-    console.log(latiLongi);
+    const latiLongi = { lat: result.lat, lon: result.lon };
+    resultList.appendChild(li);
+
+    //create special icon
+    const clickedIcon = L.icon({
+      iconUrl: "picked-color.png",
+      iconSize: [50, 78],
+      popupAnchor: [-5, -20],
+    });
 
     //handling map movement & special icon on location click from list
     li.addEventListener("click", (event) => {
@@ -76,22 +82,13 @@ function setResultList(jResult) {
       }
       clickedLayerGroup.clearLayers();
       event.target.classList.add("active");
-      const clickedData = latiLongi;
-      console.log(clickedData)
       map.setView(latiLongi, 13);
 
-      //create special icon
-      const clickedIcon = L.icon({
-        iconUrl: "picked-color.png",
-        iconSize: [38, 75],
-        iconAnchor: latiLongi, //FIXX THISS to the clicked item location
-        popupAnchor: [-5, -20],
-      });
       L.marker(position, { icon: clickedIcon })
-        .addTo(clickedLayerGroup).
-        bindTooltip(() => {return L.Util.template(`<b>${result.display_name}</b>`)});
+        .addTo(clickedLayerGroup)
+        .bindTooltip(() => {
+          return L.Util.template(`<b>Name: </b>${result.display_name}<br/>`);
+        });
     });
-
-    resultList.appendChild(li);
   }
 }
